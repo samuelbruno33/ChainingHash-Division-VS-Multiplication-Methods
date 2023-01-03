@@ -1,5 +1,6 @@
 import math
 import random
+import time
 
 
 class Node:
@@ -62,7 +63,7 @@ class LinkedList:
 
 class HashTableDivision:
     def __init__(self):
-        self.m = 5  # Scelgo un numero primo che non sia una potenza di 2
+        self.m = 101  # Scelgo un numero primo che non sia una potenza di 2
         self.h = [None] * self.m
 
     def insert(self, key, value):
@@ -147,26 +148,71 @@ class HashTableMultiplication:
 
 def main():
     div = HashTableDivision()
-    div.insert(0,0)
-    for x in range(div.m - 1):
-        div.insert(random.randint(0,1000) , random.randint(0,1000))
-    param_2 = div.get(0)
-    print("Valore cercato: ", param_2)
-    param_3 = div.get(1001)
-    print("Valore cercato: ", param_3)
-    div.delete(0)
-    div.printAll()
-
     mul = HashTableMultiplication()
+
+    print("----- INSERT -----")
+    start_bst_time = time.process_time_ns()
+    div.insert(0, 0)
+    for x in range(div.m - 1):
+        div.insert(random.randint(0, 1000), random.randint(0, 1000))
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
+
+    start_rbt_time = time.process_time_ns()
     mul.insert(0, 0)
     for x in range(mul.m - 1):
         mul.insert(random.randint(0, 1000), random.randint(0, 1000))
-    param_2 = mul.get(0)
-    print("Valore cercato: ", param_2)
-    param_3 = mul.get(1001)
-    print("Valore cercato: ", param_3)
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
+
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+    print("----- RICERCA CON SUCCESSO -----")
+    start_bst_time = time.process_time_ns()
+    div.get(0)
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
+
+    start_rbt_time = time.process_time_ns()
+    mul.get(0)
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
+
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+    print("----- RICERCA SENZA SUCCESSO -----")
+    start_bst_time = time.process_time_ns()
+    div.get(1001)
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
+
+    start_rbt_time = time.process_time_ns()
+    mul.get(1001)
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
+
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+    print("----- DELETE -----")
+    start_bst_time = time.process_time_ns()
+    div.delete(0)
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
+
+    start_rbt_time = time.process_time_ns()
     mul.delete(0)
-    mul.printAll()
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
+
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
 
 
 if __name__ == '__main__':
