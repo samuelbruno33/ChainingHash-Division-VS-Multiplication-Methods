@@ -1,9 +1,9 @@
 import math
 import random
 import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt   # Import della libreria per effettuare i grafici in Python
 
-plot_count = 0
+# plot_count = 0    # Variabile globale per contare ogni inserimento di un elemento della insert (Div method)
 
 
 class Node:
@@ -69,22 +69,35 @@ class HashTableDivision:
         self.m = 101  # Scelgo un numero primo che non sia una potenza di 2
         self.h = [None] * self.m
 
+    # def insert_with_plot(self, key, value):
+    #     start_time = time.process_time()
+    #     global plot_count
+    #     index = key % self.m
+    #     a = self.countAll()
+    #     if self.h[index] is None and a < self.m:
+    #         newLinkedList = LinkedList()
+    #         newLinkedList.insertAtFirst(key, value)
+    #         self.h[index] = newLinkedList
+    #         plot_count += 1
+    #     else:
+    #         if a < self.m:
+    #             self.h[index].insertAtLast(key, value)
+    #             plot_count += 1
+    #             end_time = time.time() - start_time
+    #             plt.plot(plot_count, end_time, marker="o", color='red')
+    #         else:
+    #             raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
+
     def insert(self, key, value):
-        start_time = time.process_time()
-        global plot_count
         index = key % self.m
         a = self.countAll()
         if self.h[index] is None and a < self.m:
             newLinkedList = LinkedList()
             newLinkedList.insertAtFirst(key, value)
             self.h[index] = newLinkedList
-            plot_count += 1
         else:
             if a < self.m:
                 self.h[index].insertAtLast(key, value)
-                plot_count += 1
-                end_time = time.time() - start_time
-                plt.plot(plot_count, end_time, marker="o", color='red')
             else:
                 raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
 
@@ -163,111 +176,106 @@ class HashTableMultiplication:
         return count
 
 
-# def main():
-#     div = HashTableDivision()
-#     mul = HashTableMultiplication()
-#
-#     print("----- INSERT -----")
-#     start_bst_time = time.process_time_ns()
-#     div.insert(0, 0)
-#     for x in range(div.m - 1):
-#         div.insert(random.randint(0, 1000), random.randint(0, 1000))
-#     end_bst_time = time.process_time_ns() - start_bst_time
-#     print("Division: %s ns " % end_bst_time)
-#
-#     start_rbt_time = time.process_time_ns()
-#     mul.insert(0, 0)
-#     for x in range(mul.m - 1):
-#         mul.insert(random.randint(0, 1000), random.randint(0, 1000))
-#     end_rbt_time = time.process_time_ns() - start_rbt_time
-#     print("Multiplication: %s ns " % end_rbt_time)
-#
-#     delta = end_bst_time - end_rbt_time
-#     print("Delta: %s ns " % delta)
-#     print("----------------------------\n")
-#
-#     print("----- RICERCA CON SUCCESSO -----")
-#     start_bst_time = time.process_time_ns()
-#     div.get(0)
-#     end_bst_time = time.process_time_ns() - start_bst_time
-#     print("Division: %s ns " % end_bst_time)
-#
-#     start_rbt_time = time.process_time_ns()
-#     mul.get(0)
-#     end_rbt_time = time.process_time_ns() - start_rbt_time
-#     print("Multiplication: %s ns " % end_rbt_time)
-#
-#     delta = end_bst_time - end_rbt_time
-#     print("Delta: %s ns " % delta)
-#     print("----------------------------\n")
-#
-#     print("----- RICERCA SENZA SUCCESSO -----")
-#     start_bst_time = time.process_time_ns()
-#     div.get(1001)
-#     end_bst_time = time.process_time_ns() - start_bst_time
-#     print("Division: %s ns " % end_bst_time)
-#
-#     start_rbt_time = time.process_time_ns()
-#     mul.get(1001)
-#     end_rbt_time = time.process_time_ns() - start_rbt_time
-#     print("Multiplication: %s ns " % end_rbt_time)
-#
-#     delta = end_bst_time - end_rbt_time
-#     print("Delta: %s ns " % delta)
-#     print("----------------------------\n")
-#
-#     print("----- DELETE -----")
-#     start_bst_time = time.process_time_ns()
-#     div.delete(0)
-#     end_bst_time = time.process_time_ns() - start_bst_time
-#     print("Division: %s ns " % end_bst_time)
-#
-#     start_rbt_time = time.process_time_ns()
-#     mul.delete(0)
-#     end_rbt_time = time.process_time_ns() - start_rbt_time
-#     print("Multiplication: %s ns " % end_rbt_time)
-#
-#     delta = end_bst_time - end_rbt_time
-#     print("Delta: %s ns " % delta)
-#     print("----------------------------\n")
-
-
-def main2():
+def main():
     div = HashTableDivision()
     mul = HashTableMultiplication()
 
-    plt.title("INSERT DIVISION METHOD")
-    plt.rcParams["figure.figsize"] = [7.50, 3.50]
-    plt.rcParams["figure.autolayout"] = True
-    plt.xlabel("Elementi")
-    plt.ylabel("Tempo Operazioni")
+    print("----- INSERT -----")
+    start_bst_time = time.process_time_ns()
     div.insert(0, 0)
-    for i in range(div.m - 1):
+    for x in range(div.m - 1):
         div.insert(random.randint(0, 1000), random.randint(0, 1000))
-    plt.show()
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
 
-    plt.title("INSERT MULTIPLICATION METHOD")
-    plt.rcParams["figure.figsize"] = [7.50, 3.50]
-    plt.rcParams["figure.autolayout"] = True
-    plt.xlabel("Elementi")
-    plt.ylabel("Tempo Operazioni")
-
+    start_rbt_time = time.process_time_ns()
     mul.insert(0, 0)
     for x in range(mul.m - 1):
         mul.insert(random.randint(0, 1000), random.randint(0, 1000))
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
 
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+    print("----- RICERCA CON SUCCESSO -----")
+    start_bst_time = time.process_time_ns()
     div.get(0)
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
 
+    start_rbt_time = time.process_time_ns()
     mul.get(0)
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
 
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+    print("----- RICERCA SENZA SUCCESSO -----")
+    start_bst_time = time.process_time_ns()
     div.get(1001)
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
 
+    start_rbt_time = time.process_time_ns()
     mul.get(1001)
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
 
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+    print("----- DELETE -----")
+    start_bst_time = time.process_time_ns()
     div.delete(0)
+    end_bst_time = time.process_time_ns() - start_bst_time
+    print("Division: %s ns " % end_bst_time)
 
+    start_rbt_time = time.process_time_ns()
     mul.delete(0)
+    end_rbt_time = time.process_time_ns() - start_rbt_time
+    print("Multiplication: %s ns " % end_rbt_time)
+
+    delta = end_bst_time - end_rbt_time
+    print("Delta: %s ns " % delta)
+    print("----------------------------\n")
+
+
+# def main2():
+#     div = HashTableDivision()
+#     mul = HashTableMultiplication()
+#
+#     plt.title("INSERT DIVISION METHOD")
+#     plt.rcParams["figure.figsize"] = [7.50, 3.50]
+#     plt.rcParams["figure.autolayout"] = True
+#     plt.xlabel("Elementi")
+#     plt.ylabel("Tempo Operazioni")
+#     div.insert(0, 0)
+#     for i in range(div.m - 1):
+#         div.insert(random.randint(0, 1000), random.randint(0, 1000))
+#     plt.show()
+#
+#     mul.insert(0, 0)
+#     for x in range(mul.m - 1):
+#         mul.insert(random.randint(0, 1000), random.randint(0, 1000))
+#
+#     div.get(0)
+#     mul.get(0)
+#
+#     div.get(1001)
+#     mul.get(1001)
+#
+#     div.delete(0)
+#     mul.delete(0)
+
+
+# if __name__ == '__main__':
+#     main2()
 
 
 if __name__ == '__main__':
-    main2()
+    main()
