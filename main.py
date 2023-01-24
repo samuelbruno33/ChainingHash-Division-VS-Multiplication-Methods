@@ -285,7 +285,7 @@ def main():
     arr = [10, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     global count_collision_div
     global count_collision_mul
-    while i < 13:
+    while i < arr.__len__():
         div2 = HashTableDivision(1000)
         mul2 = HashTableMultiplication(1000)
 
