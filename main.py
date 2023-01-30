@@ -142,11 +142,6 @@ class HashTableDivision:
         if self.h[index] is not None:
             self.h[index].remove(key)
 
-    def delete_with_plot(self, key):
-        index = key % self.m
-        if self.h[index] is not None:
-            self.h[index].remove(key)
-
     def printAll(self):
         for i in self.h:
             if i is not None:
@@ -245,11 +240,6 @@ class HashTableMultiplication:
             times2.append(end_time)
 
     def delete(self, key):
-        index = math.floor(self.m * ((key * self.A) % 1))
-        if self.h[index] is not None:
-            self.h[index].remove(key)
-
-    def delete_with_plot(self, key):
         index = math.floor(self.m * ((key * self.A) % 1))
         if self.h[index] is not None:
             self.h[index].remove(key)
@@ -388,19 +378,19 @@ def main():
 
 
 def main2():  # Serve per disegnare i grafici attraverso la libreria plot di python
-    div = HashTableDivision(1103)
-    mul = HashTableMultiplication(1024)
+    div = HashTableDivision(127)
+    mul = HashTableMultiplication(128)
 
     plt.title("INSERIMENTO")
     plt.rcParams["figure.figsize"] = [7.50, 3.50]
     plt.rcParams["figure.autolayout"] = True
     plt.xlabel("Elementi")
     plt.ylabel("Tempo Operazioni")
-    for i in range(127):
+    for i in range(div.m):
         div.insert_with_plot(random.randint(0, 1000), random.randint(0, 1000))
     plt.plot(elements, times, marker="o", color='red')
 
-    for x in range(128):
+    for x in range(mul.m):
         mul.insert_with_plot(random.randint(0, 1000), random.randint(0, 1000))
     plt.plot(elements2, times2, marker="v", color='blue')
     plt.show()
