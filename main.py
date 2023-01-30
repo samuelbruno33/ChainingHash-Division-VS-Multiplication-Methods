@@ -1,11 +1,18 @@
 import math
 import random
 import time
+import matplotlib.pyplot as plt   # Import della libreria per effettuare i grafici in Python
+import itertools
 
-# import matplotlib.pyplot as plt   # Import della libreria per effettuare i grafici in Python
+colors = itertools.cycle(["g", "y", "c"])
 
-# plot_count = 0    # Var globale per contare ogni inserimento effettuato nella insert per disegnare sul grafico
-                    # (Serve per plot - Div method)
+plot_count_div = 0    # Var globale per contare ogni inserimento effettuato nella insert per disegnare sul grafico (Serve per plot)
+plot_count_mul = 0
+count = 0
+elements = []
+elements2 = []
+times = []
+times2 = []
 
 count_collision_div = 0
 count_collision_mul = 0
@@ -74,29 +81,10 @@ class HashTableDivision:
         self.m = m  # Scelgo un numero primo che non sia una potenza di 2
         self.h = [None] * self.m
 
-    # def insert_with_plot(self, key, value):
-    #     start_time = time.process_time()
-    #     global plot_count
-    #     index = key % self.m
-    #     a = self.countAll()
-    #     if self.h[index] is None and a < self.m:
-    #         newLinkedList = LinkedList()
-    #         newLinkedList.insertAtFirst(key, value)
-    #         self.h[index] = newLinkedList
-    #         plot_count += 1
-    #     else:
-    #         if a < self.m:
-    #             self.h[index].insertAtLast(key, value)
-    #             plot_count += 1
-    #             end_time = time.time() - start_time
-    #             plt.plot(plot_count, end_time, marker="o", color='red')
-    #         else:
-    #             raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
-
     def insert(self, key, value):
         index = key % self.m
         a = self.countAll()
-        if self.h[index] is None and a < self.m:
+        if self.h[index] is None and a < self.m:    # Controllo che indice non sia nullo o che il numero degli elementi inseriti non superi la m
             newLinkedList = LinkedList()
             newLinkedList.insertAtFirst(key, value)
             self.h[index] = newLinkedList
@@ -106,12 +94,55 @@ class HashTableDivision:
             else:
                 raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
 
+    def insert_with_plot(self, key, value):
+        global plot_count_div
+        start_time = time.process_time()
+        index = key % self.m
+        a = self.countAll()
+        if self.h[index] is None and a < self.m:
+            newLinkedList = LinkedList()
+            newLinkedList.insertAtFirst(key, value)
+            self.h[index] = newLinkedList
+            plot_count_div += 1
+            end_time = time.process_time() - start_time
+            elements.append(plot_count_div)
+            times.append(end_time)
+        else:
+            if a < self.m:
+                self.h[index].insertAtLast(key, value)
+                plot_count_div += 1
+                end_time = time.process_time() - start_time
+                elements.append(plot_count_div)
+                times.append(end_time)
+            else:
+                raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
+
     def get(self, key):
         index = key % self.m
         if self.h[index] is not None:
             return self.h[index].find(key)
 
+    def get_with_plot(self, key):
+        global plot_count_div, count
+        start_time = time.process_time()
+        index = key % self.m
+        if self.h[index] is not None:
+            plot_count_div += 1
+            end_time = time.process_time() - start_time
+            elements.append(plot_count_div)
+            times.append(end_time)
+        else:
+            count += 1
+            end_time = time.process_time() - start_time
+            elements2.append(count)
+            times2.append(end_time)
+
     def delete(self, key):
+        index = key % self.m
+        if self.h[index] is not None:
+            self.h[index].remove(key)
+
+    def delete_with_plot(self, key):
         index = key % self.m
         if self.h[index] is not None:
             self.h[index].remove(key)
@@ -122,12 +153,12 @@ class HashTableDivision:
                 i.printAll()
 
     def countAll(self):
-        count = 0
+        count_all = 0
         for i in self.h:
             if i is not None:
                 ret = i.countElements()
-                count += ret
-        return count
+                count_all += ret
+        return count_all
 
     def countCollisionsInsertDivision(self, key, value):
         """
@@ -139,7 +170,7 @@ class HashTableDivision:
         global count_collision_div
         index = key % self.m
         a = self.countAll()
-        if self.h[index] is None and a < self.m:
+        if self.h[index] is None and a < self.m:    # Controllo che indice non sia nullo o che il numero degli elementi inseriti non superi la m
             newLinkedList = LinkedList()
             newLinkedList.insertAtFirst(key, value)
             self.h[index] = newLinkedList
@@ -170,12 +201,55 @@ class HashTableMultiplication:
             else:
                 raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
 
+    def insert_with_plot(self, key, value):
+        global plot_count_mul
+        start_time = time.process_time()
+        index = math.floor(self.m * ((key * self.A) % 1))
+        a = self.countAll()
+        if self.h[index] is None and a < self.m:
+            newLinkedList = LinkedList()
+            newLinkedList.insertAtFirst(key, value)
+            self.h[index] = newLinkedList
+            plot_count_mul += 1
+            end_time = time.process_time() - start_time
+            elements2.append(plot_count_mul)
+            times2.append(end_time)
+        else:
+            if a < self.m:
+                self.h[index].insertAtLast(key, value)
+                plot_count_mul += 1
+                end_time = time.process_time() - start_time
+                elements2.append(plot_count_mul)
+                times2.append(end_time)
+            else:
+                raise Exception('Lunghezza lista superata! La sua grandezza è di: {}'.format(self.m))
+
     def get(self, key):
         index = math.floor(self.m * ((key * self.A) % 1))
         if self.h[index] is not None:
             return self.h[index].find(key)
 
+    def get_with_plot(self, key):
+        global plot_count_mul, count
+        start_time = time.process_time()
+        index = math.floor(self.m * ((key * self.A) % 1))
+        if self.h[index] is not None:
+            plot_count_mul += 1
+            end_time = time.process_time() - start_time
+            elements.append(plot_count_mul)
+            times.append(end_time)
+        else:
+            count += 1
+            end_time = time.process_time() - start_time
+            elements2.append(count)
+            times2.append(end_time)
+
     def delete(self, key):
+        index = math.floor(self.m * ((key * self.A) % 1))
+        if self.h[index] is not None:
+            self.h[index].remove(key)
+
+    def delete_with_plot(self, key):
         index = math.floor(self.m * ((key * self.A) % 1))
         if self.h[index] is not None:
             self.h[index].remove(key)
@@ -186,12 +260,12 @@ class HashTableMultiplication:
                 i.printAll()
 
     def countAll(self):
-        count = 0
+        count_all = 0
         for i in self.h:
             if i is not None:
                 ret = i.countElements()
-                count += ret
-        return count
+                count_all += ret
+        return count_all
 
     def countCollisionsInsertMultiplication(self, key, value):
         """
@@ -282,10 +356,10 @@ def main():
     print("----------------------------\n")
 
     i = 0
-    arr = [10, 25, 50, 75, 100, 200, 300, 400, 500, 700, 800, 900, 1000]
+    arr = [10, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     global count_collision_div
     global count_collision_mul
-    while i < 13:
+    while i < arr.__len__():
         div2 = HashTableDivision(1000)
         mul2 = HashTableMultiplication(1000)
 
@@ -295,7 +369,7 @@ def main():
         for x in range(arr[i]):
             mul2.countCollisionsInsertMultiplication(random.randint(0, 1000), random.randint(0, 1000))
 
-        print("n:", arr[i])
+        print("n: ", arr[i])
         print("m: ", div2.m)
         alpha = (arr[i] / div2.m)
         print("Alpha: %s" % alpha)  # Calcolo alpha = n/m
@@ -311,39 +385,53 @@ def main():
         i += 1
         count_collision_mul = 0
         count_collision_div = 0
-        
-
-# def main2():  # Serve per disegnare i grafici attraverso la libreria plot di python
-#     div = HashTableDivision()
-#     mul = HashTableMultiplication()
-#
-#     plt.title("INSERT DIVISION METHOD")
-#     plt.rcParams["figure.figsize"] = [7.50, 3.50]
-#     plt.rcParams["figure.autolayout"] = True
-#     plt.xlabel("Elementi")
-#     plt.ylabel("Tempo Operazioni")
-#     div.insert(0, 0)
-#     for i in range(div.m - 1):
-#         div.insert(random.randint(0, 1000), random.randint(0, 1000))
-#     plt.show()
-#
-#     mul.insert(0, 0)
-#     for x in range(mul.m - 1):
-#         mul.insert(random.randint(0, 1000), random.randint(0, 1000))
-#
-#     div.get(0)
-#     mul.get(0)
-#
-#     div.get(1001)
-#     mul.get(1001)
-#
-#     div.delete(0)
-#     mul.delete(0)
 
 
-# if __name__ == '__main__':
-#     main2()
+def main2():  # Serve per disegnare i grafici attraverso la libreria plot di python
+    div = HashTableDivision(1103)
+    mul = HashTableMultiplication(1024)
+
+    plt.title("INSERIMENTO")
+    plt.rcParams["figure.figsize"] = [7.50, 3.50]
+    plt.rcParams["figure.autolayout"] = True
+    plt.xlabel("Elementi")
+    plt.ylabel("Tempo Operazioni")
+    for i in range(127):
+        div.insert_with_plot(random.randint(0, 1000), random.randint(0, 1000))
+    plt.plot(elements, times, marker="o", color='red')
+
+    for x in range(128):
+        mul.insert_with_plot(random.randint(0, 1000), random.randint(0, 1000))
+    plt.plot(elements2, times2, marker="v", color='blue')
+    plt.show()
+
+    global plot_count_div, plot_count_mul
+    plot_count_div = 0
+    plot_count_mul = 0
+    elements.clear(), elements2.clear(), times.clear(), times2.clear()
+
+    plt.title("RICERCA METODO DELLA DIVISIONE")
+    for x in range(div.m):
+        div.get_with_plot(random.randint(0, 1000))
+    plt.plot(elements, times, marker="o", color='red')  # Ricerca con successo
+    plt.plot(elements2, times2, marker="v", color='green')  # Ricerca senza successo
+    plt.show()
+
+    global count
+    count = 0
+    elements.clear(), elements2.clear(), times.clear(), times2.clear()
+
+    plt.title("RICERCA METODO DELLA MOLTIPLICAZIONE")
+    for x in range(mul.m):
+        mul.get_with_plot(random.randint(0, 1000))
+    plt.plot(elements, times, marker="o", color='blue')  # Ricerca con successo
+    plt.plot(elements2, times2, marker="v", color='yellow')  # Ricerca senza successo
+    plt.show()
 
 
 if __name__ == '__main__':
-    main()
+    main2()     # Per disegnare grafici
+
+
+# if __name__ == '__main__':
+#     main()
