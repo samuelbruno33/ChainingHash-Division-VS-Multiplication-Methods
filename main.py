@@ -2,9 +2,6 @@ import math
 import random
 import time
 import matplotlib.pyplot as plt   # Import della libreria per effettuare i grafici in Python
-import itertools
-
-colors = itertools.cycle(["g", "y", "c"])
 
 plot_count_div = 0    # Var globale per contare ogni inserimento effettuato nella insert per disegnare sul grafico (Serve per plot)
 plot_count_mul = 0
