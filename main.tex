@@ -1,0 +1,287 @@
+\documentclass{article}
+
+% If you're new to LaTeX, here's some short tutorials:
+% https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes
+% https://en.wikibooks.org/wiki/LaTeX/Basics
+
+% Formatting
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+
+% Math
+% https://www.overleaf.com/learn/latex/Mathematical_expressions
+% https://en.wikibooks.org/wiki/LaTeX/Mathematics
+\usepackage{amsmath,amsfonts,amssymb,mathtools}
+
+% Images
+% https://www.overleaf.com/learn/latex/Inserting_Images
+% https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions
+\usepackage{graphicx,float}
+
+% Tables
+% https://www.overleaf.com/learn/latex/Tables
+% https://en.wikibooks.org/wiki/LaTeX/Tables
+
+% Algorithms
+% https://www.overleaf.com/learn/latex/algorithms
+% https://en.wikibooks.org/wiki/LaTeX/Algorithms
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algorithmic}
+
+% Code syntax highlighting
+% https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
+\usepackage{minted}
+\usemintedstyle{borland}
+
+% References
+% https://www.overleaf.com/learn/latex/Bibliography_management_in_LaTeX
+% https://en.wikibooks.org/wiki/LaTeX/Bibliography_Management
+\usepackage{biblatex}
+\addbibresource{references.bib}
+
+% For reffering to an item list
+\usepackage{enumitem}
+
+% For colors lol
+\usepackage[dvipsnames]{xcolor}
+
+
+% Title content
+\title{Hash con Metodo della Divisione vs Metodo della Moltiplicazione \\
+       \large Laboratorio di Algoritmi - Esercizio C}
+\author{Samuel Bruno}
+\date{10 Ottobre 2022}
+
+\begin{document}
+
+\maketitle
+
+% Abstract
+\begin{abstract}
+L'obiettivo di questa relazione è quello di analizzare le differenze tra Hash con Metodo della Divisione e Hash con Metodo della Moltiplicazione.
+\end{abstract}
+
+% Introduzione
+\section{Introduzione}
+Un \textbf{Hash con metodo della Divisione} è un metodo che serve a generare una funzione hash; consiste nell' inserire una \textbf{chiave k} in uno degli \textbf{m slot} calcolato come resto della divisione di k per m. \\ 
+Ovvero \textbf{h(k) = (k mod m)}.
+Questo risulta essere un metodo molto veloce in quanto si effettua solo un' operazione di divisione.
+Il valore m dovrebbe, preferibilmente, essere diverso da una potenza di 2, in particolare sarebbe meglio utilizzare un numero primo lontano da una
+potenza di 2, in modo da limitarne le collisioni. \\
+
+Un \textbf{Hash con metodo della Moltiplicazione}, invece, consiste in 2 passi:
+\begin{enumerate}[label={\roman*.)}, ref={\roman*.)}]
+    \item Si moltiplica la chiave k per una costante A nell’intervallo 0 $<$ A $<$ 1 e si estrae la parte frazionaria (ossia $kA - \lfloor(kA)\rfloor$);
+    \item Si moltiplica il valore ottenuto per m e si prende la parte intera inferiore del risultato, ovvero \textbf{$h(k) = m * \lfloor(kA - \lfloor(kA)\rfloor)\rfloor$}.
+\end{enumerate}
+In questo caso m non è critico e può assumere un valore 2p (potenza di 2). 
+In particolare si ha la probabilità che questo metodo funzioni bene quando il valore di A si avvicina al valore: \textbf{$(\sqrt{5} -1)/2$}. \\
+
+Nel programma verranno implementate le \textbf{tabelle hash} con \textbf{gestione delle collisioni basate su concatenamento}.\\
+Il confronto verrà effettuato proprio sull'applicazione dei suddetti metodi e, più dettagliatamente, verrà analizzato attraverso i relativi tempi di esecuzione.
+Date le basi, si può procedere a descrivere la struttura dati della tabella hash.
+
+%  Strutture dati degli algoritmi
+\section{Struttura dati}
+Nelle tabelle hash con risoluzione delle collisioni per concatenazione (chaining), gli elementi collidenti vengono inseriti nella stessa posizione della tabella in una lista concatenata.
+In questo modo, una tabella hash \textit{T[0,..,m-1]} contiene, in
+posizione \textit{i}, un puntatore alla testa di una lista di oggetti con valore di hash \textit{i}.
+\clearpage
+\begin{figure}[!hb]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figura 2.4.png}
+        \caption{Hash con concatenamento}
+        \label{fig:Figura2.4}
+\end{figure}
+
+Inoltre, implementa i seguenti metodi:
+\begin{enumerate}[label={\roman*.)}, ref={\roman*.)}]
+    \item \textbf{Chained-Hash-Search(T,k):} Ricerca un elemento con chiave k nella lista T[h(k)].
+    \item \textbf{Chained-Hash-Insert(T,x):} Inserisce x in testa alla lista T[h(x.key)].
+    \item \textbf{Chained-Hash-Delete(T,x):} Cancella x dalla lista T[h(x.key)].
+\end{enumerate}
+
+% Prestazioni attese
+\section{Prestazioni attese}
+Le prestazioni dell'hashing sono valutate sulla base del fatto che ogni chiave ha la \textbf{stessa probabilità} di essere sottoposta ad hashing in qualsiasi slot della tabella.
+Per ottenere prestazioni migliori, si dovrebbe implementare un'adeguata funzione hash; questa ottimizza la prestazione distribuendo le chiavi in modo uniforme sulle posizioni della tabella, minimizzando le collisioni.
+
+ \subsection{Caso peggiore}
+Supponiamo di usare una \textbf{buona funzione} di hash:
+\begin{itemize}
+    \item \textbf{Operazione di inserimento:} Ha costo costante $O(1)$.
+    \item \textbf{Operazione di ricerca:} Nel caso peggiore, tutti gli inserimenti hanno generato una collisione e quindi sono stati concatenati nella stessa lista. La tabella hash, quindi, si riduce a una struttura lineare, come una lista collegata.
+    La complessità pessima della ricerca è dunque $O(n)$, dove n è il numero di elementi nella tabella.
+    \item \textbf{Operazione di cancellazione:} Se si usano liste bidirezionali, il tempo nel caso peggiore è $O(1)$.
+    Con liste semplici, invece, richiede lo stesso tempo della ricerca.
+\end{itemize}
+
+\clearpage
+
+\subsection{Caso medio della ricerca}
+\subsubsection{Fattore di carico}
+Si definisce il \textbf{fattore di carico} della tabella di hash come \textit{$\alpha$ = n/m}, dove $\alpha \geq 0$ è un numero razionale, n è il numero degli elementi memorizzati e m è la dimensione della tabella.
+Se la funzione hash \textit{h} soddisfa l’ipotesi di uniformità semplice, $\alpha$ corrisponde alla lunghezza media di una qualsiasi lista di concatenazione. \\
+
+Si distinguono i casi di ricerca con insuccesso (ricerca di una chiave non presente in tabella) e di ricerca con successo (ricerca di una chiave presente in tabella).
+In generale, si presuppone che il costo medio di una ricerca con successo sia minore del costo di una ricerca con insuccesso.
+\subsubsection{Ricerca con insuccesso}
+La ricerca con insuccesso consiste nel calcolo di un valore della funzione hash, per individuare la lista di concatenazione in cui cercare e nella
+scansione esaustiva di tale lista. Essendo $\alpha$ la lunghezza media di una lista di concatenazione, si può affermare che, il costo medio della ricerca con insuccesso è $\theta(1 + \alpha)$.
+\subsubsection{Ricerca con successo}
+La ricerca con successo consiste nel calcolo di un valore della funzione hash, per individuare la lista di concatenazione in cui cercare e nella scansione di tale lista, fino a trovare l’elemento cercato. Essendo $\alpha$ la lunghezza media di una lista di concatenazione e ritenendo che, mediamente, si debba scandire metà della lista prima di trovare l’elemento cercato, si può affermare che il costo medio della ricerca con successo è $\theta(1 + \alpha/2) = \theta(1 + \alpha)$.\\
+\subsubsection{Complessità media della ricerca}
+Combinando entrambe le analisi possiamo infine affermare che: \\ \\
+Se \[n = O(m)\] allora
+
+
+    div.delete(0)
+    mul.delete(0)
+
+    div.delete(0)
+    mul.delete(0) \[\alpha = n/m = O(m)/m = O(1)\]
+e il costo medio della ricerca risulta
+\[\theta(1 + \alpha) = \theta(1 + 1) = \theta(1)\] \\
+
+Di seguito una tabella riassuntiva contenente tutte le complessità:
+\begin{table}[!hb]
+    \centering
+    \begin{tabular}{cccc}
+    Operazione & Medio & Peggiore \\
+    \hline
+    Inserimento & $O(1)$ & $O(n)$ \\
+    Ricerca & $O(1)$ & $O(n)$ \\
+    Cancellazione & $O(1)$ & $O(n)$ \\
+    \end{tabular}
+    \caption{Complessità dell'hashing con concatenamento}
+    \label{tab:ComplexityChainingHash}
+\end{table}
+
+\clearpage
+
+% Organigramma del progetto
+\section{Documentazione del progetto}
+Il programma è formato in totale da 1 file contenente tutte le classi necessarie:
+\begin{enumerate}[label={\roman*.)}, ref={\roman*.)}]
+    \item \textbf{main.py:} Nel file sono presenti le classi Node, LinkedList, HashTableDivision ed HashTableMultiplication contenenti l'implementazione delle tabelle hash con metodo del concatenamento e i relativi metodi della divisione e della moltitplicazione. Infine è presente anche il confronto tra i due metodi.
+\end{enumerate}
+
+Il progetto presenta quindi la seguente struttura:
+\begin{figure}[!hb]
+        \centering
+        \includegraphics[width=1\linewidth]{Project_UML.png}
+        \caption{Diagramma delle classi}
+        \label{fig:Project_UML}
+\end{figure}
+
+\subsection{Classi e metodi}
+\subsubsection{Classe Node}
+E' la classe che implementa il singolo nodo della lista.
+I suoi attributi sono: key, value, next.
+
+\subsubsection{Classe LinkedList}
+E' la classe che implementa la linked list e possiede i seguenti attributi: head, size.
+Questa classe fornisce i seguenti metodi:
+\begin{itemize}
+    \item \textbf{insertAtFirst:} Inserisce un elemento in testa alla lista.
+    \item \textbf{insertAtLast:} Inserisce un elemento in fondo alla lista.
+    \item \textbf{remove:} Rimuove una chiave dalla lista.
+    \item \textbf{find:} Ricerca una chiave all'interno della lista.
+    \item \textbf{countElements:} Conta gli elementi all'interno della lista, scorrendola interamente.
+\end{itemize}
+
+\subsubsection{Classe HashTableDivision}
+E' la classe che implementa la tabella hash usando il metodo della divisione.
+Presenta gli attributi m (dimensione della tabella), h (funzione hash) e fornisce questi metodi:
+\begin{itemize}
+    \item \textbf{insert:} Inserisce una chiave attraverso un indice, calcolato col metodo della divisione, un elemento all'interno della tabella hash.
+    \item \textbf{get:} Ricerca una chiave richiesta in input.
+    \item \textbf{delete:} Cancella una chiave richiesta in input.
+    \item \textbf{countAll:} Conta, scorrendo ogni indice e la sua relativa lista concatenata, tutti gli elementi presenti nella tabella hash.
+    \item \textbf{countCollisionsInsertDivision:} Conta le collisioni che avvengono quando si inserisce una chiave, al crescere del fattore di caricamento $\alpha$.
+\end{itemize}
+
+\subsubsection{Classe HashTableMultiplication}
+E' la stessa classe descritta sopra, solo che il metodo di calcolo della funzione hash viene effettuato attraverso il metodo della moltiplicazione.
+
+\subsubsection{Classe Main}
+In questa  classe avviene il confronto tra i due metodi usati per calcolare la funzione hash.
+Vedremo nella prossima sezione i risultati di tali esperimenti.
+
+% Risultati Ottenuti
+\section{Risultati Sperimentali}
+\subsection{Primo test}
+Nel primo test, gli esperimenti sono stati effettuati, per il \textbf{metodo della divisione}, su una sequenza di 127 interi positivi mentre per il \textbf{metodo della moltiplicazione} su una sequenza di 128 interi positivi.
+Nel primo metodo, la scelta ottimale per \textit{m} è quella di prendere un numero primo che non sia una potenza di 2, da qui il 127.
+Invece per il secondo metodo, la scelta ottimale per \textit{m} è, viceversa, quella di avere un numero potenza di 2, da qui il 128. \\
+I test sono stati eseguiti su un HP Pavilion DV6 le cui specifiche sono:\\
+\textit{Processore Intel(R) Core(TM) i5-2450M CPU @ 2.50GHz 3.10 GHz Dual-core Quad-thread\\}
+\textit{RAM 8 GB 1333 Mhz\\}
+\textit{Sistema Operativo EndeavourOS - kernel Linux\\}
+
+Le misurazioni effettuate riguardano il tempo di esecuzione dei processi nella CPU e i vari test sono stati eseguiti per più di cinque volte, in modo da verificare la costanza dei risultati.\\
+Nella seguente tabella elenco gli ultimi 5 test eseguiti (con i risultati espressi in \textbf{$\mu$s}):
+\begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.85\linewidth]{Risultati Sperimentali.png}
+        \caption{Risultati sul confronto tra metodo della divisione e moltiplicazione}
+        \label{fig:risMethods}
+\end{figure}
+
+\subsection{Secondo test}
+Nel secondo test, invece, l'esperimento consiste nel contare quante collisioni si hanno eseguendo un numero variabile di inserimenti in una tabella hash con entrambi i metodi; in pratica constatare cosa accade al crescere del fattore di caricamento $\alpha$ = n/m.
+Per semplicità e per rendere equivalenti le due misurazioni, non ho tenuto considerazione di nessun \textit{m} ottimo, prendendo dunque come riferimento 1000 interi positivi (come massima dimensione della tabella) ed inserendo, ad ogni ciclo di test, rispettivamente, un massimo di elementi (\textit{n}) di: 10, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000.\\
+Di seguito una tabella riassuntiva dell'esperimento:
+\begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.9\linewidth]{collisionTest.png}
+        \caption{Risultati sul confronto delle collisioni al crescere del fattore di caricamento}
+        \label{fig:collisionTest}
+\end{figure}
+
+\textbf{N.B.:} Da notare che il campo percentuale viene inteso come la percentuale di collisioni avvenute nell'inserimento di N elementi, quindi matematicamente n° di collisioni diviso n elementi.
+
+\clearpage
+
+\subsection{Analisi dei risultati}
+Come possiamo vedere dalla \textit{Figura 3} i risultati sono costanti e coerenti dopo ogni test, che vede il metodo della \textbf{divisione} più vantaggioso durante \textbf{l'inserimento} e la \textbf{ricerca senza successo}, mentre il metodo della \textbf{moltiplicazione} migliore durante la \textbf{ricerca con successo} e la \textbf{cancellazione} di una chiave. L'unica differenza tra questi due risultati è che le tempistiche di computazione della moltiplicazione, rispetto a quelle della divisione, sono solo marginalmente migliori, ma nel confronto dei suoi processi,la divisione risulta nettamente più veloce.
+Invece nella tabella più in basso (\textit{Figura 4}), possiamo notare come il numero delle collisioni della divisione sia alquanto inferiore rispetto alla controparte, con una percentuale media di collisioni minore.
+Entrambe comunque tendono ad incrementare il numero delle collisioni in maniera direttamente proporzionale all'aumento del numero degli elementi da inserire nella tabella.
+
+\subsection{Analisi delle complessità}
+Analizzando le complessità dei due metodi nell'operazione dell'inserimento (\textit{Figura 5}), notiamo come questi tendano sempre a crescere leggermente con l'avanzare degli elementi inseriti in tabella.
+In questo caso, il numero degli elementi inseriti corrisponde esattamente alla dimensione totale della tabella, questo fa si che il costo computazionale non rientri precisamente nel caso medio $O(1)$, ma invece, tenda ad essere un \textbf{approssimazione} del caso peggiore $O(n)$ (improbabile però che avvenga precisamente, data la randomicità dell'inserimento degli elementi). Tutti i tempi nei grafici sono espressi in \textit{secondi}:
+\begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.9\linewidth]{Inserimento.png}
+        \caption{In \textbf{\textcolor{red}{rosso}} Hash con metodo della divisione ed in \textbf{\textcolor{blue}{blu}} Hash con metodo della moltiplicazione}
+        \label{fig:div_vs_mul}
+\end{figure}
+
+\clearpage
+
+Per quanto riguarda la ricerca, invece, la situazione risulta essere conforme a quanto detto nella \textit{Sezione 3}. Le operazioni di ricerca con successo e ricerca senza successo, vengono effettuate con un tempo quasi costante $O(1)$, sia per il metodo della divisione (\textit{Figura 6}) che per il metodo della moltiplicazione (\textit{Figura 7}).
+\begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.9\linewidth]{Ricerca divisione.png}
+        \caption{Confronto Ricerca \textbf{\textcolor{red}{con successo}} e \textbf{\textcolor{ForestGreen}{senza successo}} del metodo della divisione}
+        \label{fig:succ_search}
+\end{figure}
+
+\begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.9\linewidth]{Ricerca moltiplicazione.png}
+        \caption{Confronto Ricerca \textbf{\textcolor{blue}{con successo}} e \textbf{\textcolor{yellow}{senza successo}} del metodo della moltiplicazione}
+        \label{fig:no_succ_search}
+\end{figure}
+
+Infine, non ho incluso l'operazione di cancellazione, poichè sostanzialmente molto simile alla ricerca, evitando quindi di inserire risultati ripetitivi.
+
+\clearpage
+
+% Summary and Conclusions
+\section{Conclusione}
+In conclusione, come si evince dagli esperimenti effettuati, nella maggior parte dei casi, è conveniente optare per l’utilizzo del \textbf{metodo della divisione} in quanto, non solo il calcolo della sua funzione hash risulta più semplice (essendo una sola operazione in modulo), ma si rivela anche leggermente meno laborioso nei calcoli (in CPU). Risulta quindi più efficace, riducendo la quantità di collisioni di elementi con la stessa chiave e  diminuendo così il principale problema degli inserimenti in una tabella hash.
+
+\end{document}
